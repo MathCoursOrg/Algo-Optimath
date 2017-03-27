@@ -9,7 +9,7 @@ import random as rd
 
 identifiantPersonne = ["Christophe", "Julie", "Cyprien", "Victor", "Fabien", "Jean Pierre", "Alice", "Bob", "Candice", "Damien"]
 
-identifiantQuestion = ["Question 1", "Question 2", "Question 3", "Question 4"]
+identifiantQuestion = ["Question 1", "Question 2"]
 
 #Pour générer la matrice matriceOrganisation
 
@@ -20,9 +20,11 @@ matriceOrganisation = np.zeros((n,m)) #Cherchez pas à comprendre les doubles pa
 matriceConfOrnagisee = np.zeros((m, 5))
 #Remplissage de la matriceOrganisation
 
+#Remplissage alétoire pour tester le programme:
 for i in range(n):
     for j in range(m):
-        matriceOrganisation[i,j] = rd.randint(-1, 3) #pour tester
+        matriceOrganisation[i,j] = rd.randint(0, 3) #pour tester
+
 
 def ListerPersonnesInteressees(idQuestion):
     return [ j for j in range(n) if matriceOrganisation[j, idQuestion] > -1 ] #Parfois, j'aime python <3
@@ -37,15 +39,23 @@ def TirerPersonnesPourLaQuestion(idQuestion):
         matriceOrganisation[temp[i][0],idQuestion] += 1
 
     # return [identifiantPersonne[temp[i][0]] for i in range(5)]
-    return temp
+    return [temp[i][0] for i in range(len(temp))]
+
+#Pour chaque question, on a listé les personnes intéressées, et trier dans l'ordre de priorité de participation
+#(ceux qui ont participé le moins à une question sont prioritaires.)
+
+# associationQuestionPersonne = [[j, TirerPersonnesPourLaQuestion(j)] for j in range(m)]
+listePersonneDisponibles = [True for i in range(n)]
 
 for question in range(m):
-    print(identifiantQuestion[question])
-    print(TirerPersonnesPourLaQuestion(question))
+    liste = TirerPersonnesPourLaQuestion(question)
+    compteur = 0
+    for personne in liste:
+        if listePersonneDisponibles[personne] and compteur < 5:
+            print(matriceConfOrnagisee)
+            matriceConfOrnagisee[question,compteur] = personne
+            compteur +=1
+            listePersonneDisponibles[personne] = False
 
-print(matriceOrganisation)
 
-print(TirerPersonnesPourLaQuestion(2))
-
-
-
+print(matriceConfOrnagisee)
