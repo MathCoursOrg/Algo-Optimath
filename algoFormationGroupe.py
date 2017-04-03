@@ -13,23 +13,37 @@
 
 #TODO: Cet algorithme «prioritarise» d'une certaine façon la question 1,
 # puisqu'il assigne les personnes d'abord pour la quesiton 1 puis les marquent
-# comme non disponible. Est-ce raisonnable ?
-#TODO:
+# comme non disponible. Est-ce raisonnable ? => résolu, les questions sont tirées au sort
+
+#TODO: On suppose dans le programme qu'il y a nombredepersonne > 5*nombredequestions, car l'algorithme formera
+#des groupes de 5 personnes pour chaque question de façon indépendante
+
+#TODO: il est possible qu'il y ait des groupes formés de moins de 5 personnes si la condition ci dessus n'est pas réalisée
+
+import pickle
 
 import numpy as np
 import random as rd
 
-#Variables globales
-identifiantPersonne = ["Christophe", "Julie", "Cyprien", "Victor", "Fabien", "Jean Pierre", "Alice", "Bob", "Candice", "Damien"]
-identifiantQuestion = ["Question 1", "Question 2"]
+with open('bdd/personnes', 'rb') as fichier:
+    pp = pickle.Unpickler(fichier)
+    identifiantPersonne =pp.load()
+
+with open('bdd/questions', 'rb') as fichier:
+    pp = pickle.Unpickler(fichier)
+    identifiantQuestion = pp.load()
+
+with open('bdd/participation', 'rb') as fichier:
+    pp = pickle.Unpickler(fichier)
+    matriceOrganisation = pp.load()
 
 n = len(identifiantPersonne)
 m = len(identifiantQuestion)
 
-matriceOrganisation = np.zeros((n,m)) #Cherchez pas à comprendre les doubles parenthèses...
+# matriceOrganisation = np.zeros((n,m)) #Cherchez pas à comprendre les doubles parenthèses...
 
 #Le «-1» sert à initialiser la matrice matriceConfOrnagisee. C'est le code "personne n'est assigné à cette question"
-matriceConfOrnagisee = np.zeros((m, 5))-1
+matriceConfOrnagisee = np.zeros((m, 5)) - 1
 
 #Fonctions
 def ListerPersonnesInteressees(idQuestion):
@@ -47,9 +61,9 @@ def TirerPersonnesPourLaQuestion(idQuestion):
     return [temp[i][0] for i in range(len(temp))]
 
 #Remplissage alétoire pour tester le programme:
-for i in range(n):
-    for j in range(m):
-        matriceOrganisation[i,j] = rd.randint(0, 3)
+# for i in range(n):
+#     for j in range(m):
+#         matriceOrganisation[i,j] = rd.randint(0, 3)
 
 #Début du programme:
 
@@ -57,14 +71,22 @@ for i in range(n):
 #(ceux qui ont participé le moins à une question sont prioritaires.)
 
 listePersonneDisponibles = [True for i in range(n)] #Cette liste permettra de suivre les personnes qui participent déjà aux questions.
+listeQuestionTraitees = [False for i in range(m)]
 
 for question in range(m):
-    liste = TirerPersonnesPourLaQuestion(question)
+
+    idQuestion = rd.randint(0, m-1) #On prend une question au hasard
+
+    while listeQuestionTraitees[idQuestion] :
+        idQuestion = (idQuestion + 1) % m #Si jamais elle est déjà traitées, on choisit la suivante modulo le nombre de questions
+
+    listeQuestionTraitees[idQuestion] = True #On marque la question comme traitée.
+    liste = TirerPersonnesPourLaQuestion(idQuestion)
     compteur = 0
     for personne in liste:
         if listePersonneDisponibles[personne] and compteur < 5: #On remplit la matriceConfOrnagisee pour chaque question
                                                                 #si les personnes sont dispo, et si on a mis moins de 5 personnes.
-            matriceConfOrnagisee[question,compteur] = personne
+            matriceConfOrnagisee[idQuestion,compteur] = personne
             compteur +=1 # Ce compteur sert à compter le nombre de personne assignés à une question
             listePersonneDisponibles[personne] = False #la personne participe à une question, donc n'est plus dispo
 
@@ -73,5 +95,12 @@ for question in range(m):
 for question in range(m):
         textPersonne =""
         for personne in range(5):
-            textPersonne += identifiantPersonne[int(matriceConfOrnagisee[question][personne])] +", "
+            if matriceConfOrnagisee[question][personne] > -1:
+                textPersonne += identifiantPersonne[int(matriceConfOrnagisee[question][personne])] +", "
         print("Le groupe composée de " + textPersonne + "s'occupera la question : " + identifiantQuestion[question])
+
+with open('bdd/participation', 'wb') as fichier:
+    mon_pickler = pickle.Pickler(fichier)
+    mon_pickler.dump(matriceOrganisation)
+
+print(matriceOrganisation)

@@ -1,0 +1,53 @@
+\documentclass[11pt, a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{microtype}
+\usepackage[francais]{babel}
+%\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{amssymb}
+% Rappel%Pour faire un symbole comme R pour les réels:
+% $\mathbb{R} $
+
+\title{Explication du tirage des gens}
+\begin{document}
+%Définition de commandes
+%\newcommand{\impo}[1]{\emph{#1}}
+%Fin de définition de commandes
+
+\maketitle
+
+Dans la version actuelle des choses, l'algorithme forme toujours les même groupes, puisqu'il tire au
+les personnes dans leur ordre de participation. Il n'y a pas assez de hasard dans le processus (il
+suffit le faire tourner et voir l'évolution de la matrice Organisation).
+
+Donc, il faut pour cela «coefficienter» la probabilité de participation par l'inverse de taux de
+participation (moins on a participé, plus on a de chance de participer.)
+
+Mon idée était de prendre une fonction décroissante sur l'intervalle $[0,1]$ d'aire égale à 1, par
+exemple:
+\[
+    p(t) = c(\exp(-\lambda(t-1))-1)
+    \]
+Avec $c$ une constante telle que $\int_0^1 p = 1$. J'ai calculé $c = \frac{1}{\lambda}(\exp(\lambda
+-1)) +1$.
+Puis, de grouper les gens par leur coefficient de participation (c'est tout simplement le nombre de
+fois où ils ont participé). On obtient $N$ groupes. Ensuite, on subdivise l'intervalle $[0, 1]$ en
+$N$ sous-intervalle de taille $1/N$ noté $I_j$. Puis, on assigne à chaque sous intervalle la valeur
+$\int_{I_j} p(t)$.
+Puis, on assigne à chaque personne $i$, qui a pour coefficient de participation $j$ la probabilité de participation:
+\[
+    P(i)= \frac{\int_{I_j}p(t)}{N_j}
+\]
+Où $N_j$ est le nombre de personne qui ont un coefficient de participation égale à $j$ (c'est-à-dire
+le nombre de personne qui ont participé $j$ fois).
+
+Et finalement les personnes sont tirées avec la loi de probabilité suivante (avec $X$ la variable
+aléatoire associée à l'identifiant de la personne tirée)
+
+\[
+    \mathbb{P}(X = i)= P(i)
+\]
+
+\end{document}
