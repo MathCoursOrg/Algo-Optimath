@@ -1,3 +1,7 @@
+---
+title: Débattre sur Opτι Mατhs
+---
+
 # Débattre sur Opτι Mατhs
 
 Voici la page d'accueil du projet Opτι Mατhs. Ici, vous trouverez le code de
