@@ -61,6 +61,7 @@ def AssocierPoidsACoefficient(tailleListeCoefficient):
 
     return listePoids
 
+#Pour choisir un coefficient, on regarde les poids triées par ordre croissant
 def dicho( tableauTrie, valeur ): #valeur se trouve entre le min et le max tu tableau trié
     n = len(tableauTrie)
     a = 0
@@ -75,13 +76,13 @@ def dicho( tableauTrie, valeur ): #valeur se trouve entre le min et le max tu ta
 
 def TirerCoefficient(listeCoefficient):
     m = len(listeCoefficient)
-    listePoids = AssocierPoidsACoefficient(m)
+    listePoids = AssocierPoidsACoefficient(m) #Normalement triée par ordre croissant, puisque la fonction p décroit ( on prend l'aire de 0 à p )
 
-    hasard = random.rand(0, sum(listePoids))
+    hasard = rd.rand(0, max(listePoids)) #le maximun correspond à l'aire
 
     return listeCoefficient[dicho(listePoids, hasard)] # WTF MAIS N'IMP
 
-def TirerUnePersonnesPourLaQuestion(idQuestion):
+def TirerUnePersonnePourLaQuestion(idQuestion):
     listePersonne=ListerPersonnesInteressees(idQuestion)
 
     temp = [[listePersonne[i],matriceOrganisation[listePersonne[i], idQuestion]] for i in range(len(listePersonne))]
@@ -91,7 +92,7 @@ def TirerUnePersonnesPourLaQuestion(idQuestion):
     coefDeLaPersonneTiree = TirerCoefficient(listeCoefficientDifferentTries)
 
     listePersonneDeCoef = [temp[i][0] for i in range(len(listePersonne)) if temp[i][1] == coefDeLaPersonneTiree] # OH TA MÈRE
-    personneTiree = listePersonneDeCoef[random.randint(0, len(listePersonne)-1)]
+    personneTiree = listePersonneDeCoef[rd.randint(0, len(listePersonne)-1)]
 
     return personneTiree
 #Début du programme:
@@ -99,25 +100,31 @@ def TirerUnePersonnesPourLaQuestion(idQuestion):
 #Pour chaque question, on liste les personnes intéressées, et triées dans l'ordre de priorité de participation
 #(ceux qui ont participé le moins à une question sont prioritaires.)
 
-listePersonneDisponibles = [True for i in range(n)] #Cette liste permettra de suivre les personnes qui participent déjà aux questions.
+listePersonnesDisponibles = [True for i in range(n)] #Cette liste permettra de suivre les personnes qui participent déjà aux questions.
 listeQuestionTraitees = [False for i in range(m)]
 
 for question in range(m):
-
-    idQuestion = rd.randint(0, m-1) #On prend une question au hasard
-
+    #On prend une question au hasard:
+    idQuestion = rd.randint(0, m-1)
     while listeQuestionTraitees[idQuestion] :
         idQuestion = (idQuestion + 1) % m #Si jamais elle est déjà traitées, on choisit la suivante modulo le nombre de questions
-
     listeQuestionTraitees[idQuestion] = True #On marque la question comme traitée.
-    liste = TirerPersonnesPourLaQuestion(idQuestion)
-    compteur = 0
-    for personne in liste:
-        if listePersonneDisponibles[personne] and compteur < 5: #On remplit la matriceConfOrnagisee pour chaque question
-                                                                #si les personnes sont dispo, et si on a mis moins de 5 personnes.
-            matriceConfOrnagisee[idQuestion,compteur] = personne
-            compteur +=1 # Ce compteur sert à compter le nombre de personne assignés à une question
-            listePersonneDisponibles[personne] = False #la personne participe à une question, donc n'est plus dispo
+
+    #Pour cette question, il nous reste plus qu'à tirer 5 personnes différentes.
+
+    for compteur in range(5):
+        personne = TirerUnePersonnePourLaQuestion(idQuestion)
+        #En mode bourrin, si elle n'est pas dispo, on tire au hasard une autre personne
+        #TODO: l'algorithme tourne en rond s'il n'y a pas assez de personne !!
+        while (listePersonnesDisponibles[personne]):
+                personne = TirerUnePersonnePourLaQuestion(idQuestion)
+
+        #Et une fois que c'est bon, on marque la personne comme plus disponible
+        listePersonnesDisponibles[personne] = False
+
+        #On l'ajoute au planning
+
+        matriceConfOrnagisee[idQuestion,compteur] = personne
 
 #Affichage propre:
 

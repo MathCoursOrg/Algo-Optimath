@@ -50,30 +50,35 @@ aléatoire associée à l'identifiant de la personne tirée)
     \mathbb{P}(X = i)= P(i)
 \]
 
+\newpage
+
 \section{Deuxième version}
 
 On a vu que la loi fixée plus haut est défaillante si jamais il y a un très grand nombre de gens qui
 ont un coefficient faible et peu de gens à coefficient fort (à cause de la division par $N_j$ on se
-retrouve avec une probabilité quasi nulle de tirer des gens qui n'ont pas participer).
+retrouve avec une probabilité quasi nulle de tirer des gens qui n'ont pas participé).
 
-Alors, soit on divise par un coefficient, soit on utilise la méthode exposée ci-dessous.
+Alors, soit on divise par un coefficient plus judicieux, soit on utilise la méthode exposée ci-dessous.
 
-L'idée (plus simple) est de tirer d'abord au hasard un coefficient de participation, puis de
+L'idée (plus simple \emph{a priori}) est de tirer d'abord au hasard un coefficient de participation, puis de
 tirer (avec la loi uniforme cette fois ci) une personne qui a le coefficient de participation tirée
 précédemment.
 
-Donc, on reprend l'idée plus haut, toujours avec la fonction $p$.
+Donc, on reprend l'idée plus haut, toujours avec la fonction $p$ (plus besoin de la normaliser)
 \[
-    p(t) = c(\exp(-\lambda(t-1))-1)
-    \]
-Avec $c$ une constante telle que $\int_0^1 p = 1$. J'ai calculé $c = \frac{1}{\lambda}(\exp(\lambda
--1)) +1$.
+    p(t) = \exp(-\lambda(t-1))-1
+\]
+Où $p: [0;1] \to \mathbb{R}^+$.
 
 Puis, on associe à chaque coefficient le poids suivant:
 \[
-    N(i)=\int_{I_i}p
-    \]
-On tire ensuite au hasard le coefficient $c_j$ qui a pour poids $N_j$.
+    N(i)=\int_{0}^{\frac{i}{m}}p(t)dt
+\]
+Où $m$ est le nombre de coefficient des personnes qui participe à la question.
+
+On tire ensuite au hasard le coefficient $c_j$ qui a pour poids $N_j$. Pour cela, on tire une valeur
+$m$ prise au hasard entre $0$ et $\max_{i}(N(i)) = N(m)$. Puis, on détermine $i$ tel que $N(i) <= m$
+et $N(i+1)>m$, qui sera le coefficient de participation de la prochaine personne tirée.
 
 Puis, on tire une personne parmi la liste des gens qui ont le coefficient tiré au hasard, avec une
 équiprobabilité.
