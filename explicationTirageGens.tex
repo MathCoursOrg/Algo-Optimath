@@ -18,6 +18,7 @@
 
 \maketitle
 
+\section{Première version}
 Dans la version actuelle des choses, l'algorithme forme toujours les même groupes, puisqu'il tire au
 les personnes dans leur ordre de participation. Il n'y a pas assez de hasard dans le processus (il
 suffit le faire tourner et voir l'évolution de la matrice Organisation).
@@ -45,9 +46,38 @@ le nombre de personne qui ont participé $j$ fois).
 
 Et finalement les personnes sont tirées avec la loi de probabilité suivante (avec $X$ la variable
 aléatoire associée à l'identifiant de la personne tirée)
-
 \[
     \mathbb{P}(X = i)= P(i)
 \]
+
+\section{Deuxième version}
+
+On a vu que la loi fixée plus haut est défaillante si jamais il y a un très grand nombre de gens qui
+ont un coefficient faible et peu de gens à coefficient fort (à cause de la division par $N_j$ on se
+retrouve avec une probabilité quasi nulle de tirer des gens qui n'ont pas participer).
+
+Alors, soit on divise par un coefficient, soit on utilise la méthode exposée ci-dessous.
+
+L'idée (plus simple) est de tirer d'abord au hasard un coefficient de participation, puis de
+tirer (avec la loi uniforme cette fois ci) une personne qui a le coefficient de participation tirée
+précédemment.
+
+Donc, on reprend l'idée plus haut, toujours avec la fonction $p$.
+\[
+    p(t) = c(\exp(-\lambda(t-1))-1)
+    \]
+Avec $c$ une constante telle que $\int_0^1 p = 1$. J'ai calculé $c = \frac{1}{\lambda}(\exp(\lambda
+-1)) +1$.
+
+Puis, on associe à chaque coefficient le poids suivant:
+\[
+    N(i)=\int_{I_i}p
+    \]
+On tire ensuite au hasard le coefficient $c_j$ qui a pour poids $N_j$.
+
+Puis, on tire une personne parmi la liste des gens qui ont le coefficient tiré au hasard, avec une
+équiprobabilité.
+
+Ensuite, il faut recommencer pour tirer une autre personne etc..
 
 \end{document}
