@@ -46,19 +46,20 @@ with open('bdd/participation', 'rb') as fichier:
 n = len(identifiantPersonne)
 m = len(identifiantQuestion)
 matriceConfOrnagisee = np.zeros((m, 5)) - 1 #Le «-1» sert à initialiser la matrice matriceConfOrnagisee. C'est le code "personne n'est pas intéressé par cette question"
-l = 0.5 # l pour lambda. C'est un paramètre à déterminer.
+l = 0.694 # l pour lambda. C'est un paramètre à déterminer.
 
 
 #DÉFINITIONS DES FONCTIONS
 def AireProba(a):
-    return math.exp(-l*(a-1) -1) #Une certaine fonction, pas besoin de normaliser.
+    # return math.exp(-l*(a-1) -1) #Une certaine fonction, pas besoin de normaliser.
+    return a
 
 def ListerPersonnesInteressees(idQuestion):
     return [ j for j in range(n) if matriceOrganisation[j, idQuestion] > -1 ] #Parfois, j'aime python <3
 
 def AssocierPoidsACoefficient(tailleListeCoefficient):
     listePoids = [0 for _ in range(tailleListeCoefficient)]
-    a = 0
+    a = 1/tailleListeCoefficient
     for i in range(tailleListeCoefficient):
         listePoids[i] = AireProba(a) #On prend l'aire de 0 à a
         a += 1/tailleListeCoefficient
@@ -79,7 +80,8 @@ def dicho( tableauTrie, valeur ): #valeur se trouve entre le min et le max tu ta
 
 def TirerCoefficient(listeCoefficient):
     m = len(listeCoefficient)
-    listePoids = AssocierPoidsACoefficient(m) #Normalement triée par ordre croissant, puisque la fonction p décroit ( on prend l'aire de 0 à p )
+    listePoids = AssocierPoidsACoefficient(m) #Normalement triée par ordre croissant, puisque la fonction est croissante
+    # print(listePoids)
     hasard = rd.uniform(0, max(listePoids)) #le maximun correspond à l'aire
     return listeCoefficient[dicho(listePoids, hasard)] # WTF MAIS N'IMP
 
@@ -133,12 +135,12 @@ for question in range(m):
 
 #Affichage propre:
 
-for question in range(m):
-        textPersonne =""
-        for personne in range(5):
-            if matriceConfOrnagisee[question][personne] > -1:
-                textPersonne += identifiantPersonne[int(matriceConfOrnagisee[question][personne])] + "#" + str(int(matriceConfOrnagisee[question][personne]))+", "
-        print("Le groupe composée de " + textPersonne + "s'occupera la question : " + identifiantQuestion[question])
+# for question in range(m):
+#         textPersonne =""
+#         for personne in range(5):
+#             if matriceConfOrnagisee[question][personne] > -1:
+#                 textPersonne += identifiantPersonne[int(matriceConfOrnagisee[question][personne])] + "#" + str(int(matriceConfOrnagisee[question][personne]))+", "
+#         print("Le groupe composée de " + textPersonne + "s'occupera la question : " + identifiantQuestion[question])
 
 #Enregistrement de la matriceOrganisation qui stocke tous les coefficients de participation
 with open('bdd/participation', 'wb') as fichier:
@@ -150,10 +152,13 @@ with open('bdd/participation', 'wb') as fichier:
 
 print(matriceOrganisation)
 
-for personne in range(n):
-    nomPersonne = identifiantPersonne[personne]
-    text = nomPersonne + ":"
-    for question in range(m):
-        nomQuestion = identifiantQuestion[question]
-        text += nomQuestion + " " + str(matriceOrganisation[personne, question])
-    print(text)
+# for personne in range(n):
+#     nomPersonne = identifiantPersonne[personne]
+#     text = nomPersonne + ":"
+#     for question in range(m):
+#         nomQuestion = identifiantQuestion[question]
+#         text += nomQuestion + " " + str(matriceOrganisation[personne, question])
+#     print(text)
+
+
+
