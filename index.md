@@ -11,8 +11,6 @@ groupes seront affichés sur Facebook et ici.
 
 Ces groupes seront constitués de 5 personnes (plus un modérateur occasionnellement).
 
---------------
-
 # Listes des problématiques à résoudre:
 Voici la liste (qui changera au cours du temps !) des problématiques qu'il nous
 faut résoudre ! Parmi toutes ces questions, choississez celles qui vous
